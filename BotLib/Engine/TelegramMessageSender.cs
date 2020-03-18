@@ -15,11 +15,29 @@ namespace BotLib.Engine
         private Queue<TelegramMessage> Queue;
         private Timer SendTimer;
 
+        /// <summary>
+        /// Creates an instance of Sender
+        /// </summary>
+        /// <param name="bot">Reference to the bot</param>
         public TelegramMessageSender(TelegramFSMBot bot)
         {
             this.bot = bot;
             Queue = new Queue<TelegramMessage>();
             SendTimer = new Timer(SENDING_INTERVAL);
+            SendTimer.Elapsed += TimeToSend;
+            SendTimer.Start();
+        }
+
+        /// <summary>
+        /// Creates an instance of Sender
+        /// </summary>
+        /// <param name="bot">Reference to the bot</param>
+        /// <param name="SendingInterval">Interval of sending in milliseconds</param>
+        public TelegramMessageSender(TelegramFSMBot bot, int SendingInterval = 50)
+        {
+            this.bot = bot;
+            Queue = new Queue<TelegramMessage>();
+            SendTimer = new Timer(SendingInterval);
             SendTimer.Elapsed += TimeToSend;
             SendTimer.Start();
         }

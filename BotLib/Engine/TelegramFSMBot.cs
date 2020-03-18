@@ -185,7 +185,7 @@ namespace BotLib.Engine
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             string version = fvi.FileVersion;
             Me = GetMeAsync().Result.Username;
-            Console.WriteLine(string.Format("{0} v.{1} is starting, last start time is {2}", Me, version, FSMConfig.StartTime));
+            Console.WriteLine(string.Format("Bot {0}, BotLib v.{1} is starting, previous start time is {2}", Me, version, FSMConfig.StartTime));
             FSMConfig.StartTime = DateTime.UtcNow;
         }
 
