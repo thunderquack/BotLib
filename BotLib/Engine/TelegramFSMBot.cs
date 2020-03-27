@@ -32,11 +32,9 @@ namespace BotLib.Engine
         private Type ParametricInitStateType;
         private TelegramMessageSender Sender;
 
-        public TelegramFSMBot(string token, HttpClient httpClient = null) : base(token, httpClient)
+        public TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(token, httpClient)
         {
-#if DEBUG
-            DebugMode = true;
-#endif
+            this.DebugMode = DebugMode;
             Sender = new TelegramMessageSender(this);
             Machines = new Dictionary<int, BotMachine>();
             LastMessageIds = new Dictionary<long, int>();
