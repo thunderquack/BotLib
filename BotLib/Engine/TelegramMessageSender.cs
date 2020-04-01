@@ -187,6 +187,22 @@ namespace BotLib.Engine
                             }
                         }
                         break;
+
+                    case TelegramMessageType.TextWithKeyboardEdited:
+                        {
+                            TelegramTextMessageWithKeyboardEdited msg = message as TelegramTextMessageWithKeyboardEdited;
+                            try
+                            {
+                                int result = bot.EditMessageTextAsync(msg.ChatId, msg.OriginalMessageId, msg.Text, msg.ParseMode, msg.DisableWebPagePreview, msg.Keyboard).Result.MessageId;
+                                msg.SetMessageId(result);
+                                bot.SetLastMessageId(msg.ChatId, result);
+                            }
+                            catch (Exception error)
+                            {
+                                BotUtils.LogException(error);
+                            }
+                        }
+                        break;
                 }
             }
             SendTimer.Start();

@@ -31,11 +31,11 @@ namespace BotLib.FSM
         /// <summary>
         /// Returns true if something is changed and it is required to get new state and new message
         /// </summary>
-        public abstract void ProcessCommand(TelegramCommand Command);
+        public abstract void ProcessCommand(TelegramCommand command);
 
-        public void SetLastMessageId(int MessageId)
+        public void SetLastMessageId(int messageId)
         {
-            this.LastMessageId = MessageId;
+            LastMessageId = messageId;
         }
 
         protected void ActivateState(BotState state)

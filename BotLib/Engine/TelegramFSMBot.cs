@@ -52,7 +52,7 @@ namespace BotLib.Engine
 
         public delegate void MessagePostedDelegate(long ChatId, int MessageId);
 
-        public event EventHandler<ChatMembersAddedEventArgs> ChatMembersAdded;
+        //TODO: public event EventHandler<ChatMembersAddedEventArgs> ChatMembersAdded;
 
         public event EventHandler<FileTooBigEventArgs> FileTooBig;
 

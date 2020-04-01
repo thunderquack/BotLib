@@ -6,17 +6,24 @@ namespace BotLib.Engine.Messages
     {
         public static int TEXT_LENGTH = 2048;
 
-        public TelegramTextMessage(long ChatId, string Text, ParseMode ParseMode = ParseMode.Markdown) : base(ChatId)
+        public TelegramTextMessage(long chatId, string text, ParseMode parseMode = ParseMode.Markdown) : base(chatId)
         {
-            this.ParseMode = ParseMode;
-            if (Text.Length > TEXT_LENGTH)
-                this.Text = Text.Substring(0, TEXT_LENGTH);
-            else
-                this.Text = Text;
+            ParseMode = parseMode;
+            Text = text;
+            CutText();
         }
 
         public ParseMode ParseMode { get; }
-        public string Text { get; }
+
+        public string Text { get; protected set; }
+
+        protected void CutText()
+        {
+            if (Text.Length > TEXT_LENGTH)
+                Text = Text.Substring(0, TEXT_LENGTH);
+            else
+                Text = Text;
+        }
 
         protected override void SetMessageType()
         {

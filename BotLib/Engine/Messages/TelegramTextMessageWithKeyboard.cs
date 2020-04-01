@@ -6,7 +6,7 @@ namespace BotLib.Engine.Messages
 {
     public class TelegramTextMessageWithKeyboard : TelegramTextMessage
     {
-        private InlineKeyboardButton[][] Keyboard;
+        internal InlineKeyboardButton[][] Keyboard;
         private bool MessageIdIsSet = false;
 
         public TelegramTextMessageWithKeyboard(long ChatId, string Text, ParseMode ParseMode = ParseMode.Markdown, bool DisableWebPagePreview = false) : base(ChatId, Text, ParseMode)
@@ -16,6 +16,7 @@ namespace BotLib.Engine.Messages
         }
 
         public int MessageId { get; private set; }
+
         public InlineKeyboardMarkup ReplyMarkup => new InlineKeyboardMarkup(Keyboard);
 
         public void AddCallbackButton(string Text, string InlineCommand, bool ToBottom = false)

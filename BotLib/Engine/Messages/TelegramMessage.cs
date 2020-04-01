@@ -2,10 +2,10 @@
 {
     public abstract class TelegramMessage
     {
-        public TelegramMessage(long ChatId, bool DisableWebPagePreview = false)
+        public TelegramMessage(long chatId, bool disableWebPagePreview = false)
         {
-            this.ChatId = ChatId;
-            this.DisableWebPagePreview = DisableWebPagePreview;
+            this.ChatId = chatId;
+            this.DisableWebPagePreview = disableWebPagePreview;
             SetMessageType();
         }
 

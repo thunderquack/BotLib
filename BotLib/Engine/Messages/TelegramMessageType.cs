@@ -10,6 +10,7 @@
         TextWithLink,
         Payment,
         Typing,
-        File
+        File,
+        TextWithKeyboardEdited,
     }
 }
