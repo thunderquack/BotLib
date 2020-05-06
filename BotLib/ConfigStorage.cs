@@ -47,6 +47,7 @@ namespace BotLib
 
         private void Save()
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(FileName));
             File.WriteAllText(FileName, JsonConvert.SerializeObject(Parameters));
         }
     }

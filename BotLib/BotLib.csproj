@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.9.4</AssemblyVersion>
-    <FileVersion>1.0.9.4</FileVersion>
-    <Version>1.0.9.4</Version>
-    <Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin-Moscow, 2020</Copyright>
+    <AssemblyVersion>1.0.9.7</AssemblyVersion>
+    <FileVersion>1.0.9.7</FileVersion>
+    <Version>1.0.9.7</Version>
+    <Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2020</Copyright>
     <Authors>Egor Ivanov</Authors>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="newtonsoft.json" Version="12.0.3" />
-    <PackageReference Include="Telegram.Bot" Version="15.4.0" />
+    <PackageReference Include="Telegram.Bot" Version="15.5.1" />
   </ItemGroup>
 
 </Project>

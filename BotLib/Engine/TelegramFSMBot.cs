@@ -23,10 +23,11 @@ namespace BotLib.Engine
         public bool Terminate = false;
         protected AdminTasker AdminTasker;
         protected Dictionary<long, int> LastMessageIds;
-        private const string CONFIG_FILE = "botconfig.json";
+        private const string CONFIG_DIR = "botconfig";
+        private string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
         private const string PARAMETRIC_COMMAND_PALETTE = "\\/start (.*)";
         private Type BotMachineType;
-        private FSMBotConfig FSMConfig = new FSMBotConfig(CONFIG_FILE);
+        private FSMBotConfig FSMConfig;
         private Type InitStateType;
         private Dictionary<int, BotMachine> Machines;
         private Type ParametricInitStateType;
@@ -39,6 +40,7 @@ namespace BotLib.Engine
             Machines = new Dictionary<int, BotMachine>();
             LastMessageIds = new Dictionary<long, int>();
             AdminTasker = new AdminTasker(this);
+            FSMConfig = new FSMBotConfig(configFile);
             SetInitStateType();
             SetParametricInitStateType();
             SetBotMachineType();

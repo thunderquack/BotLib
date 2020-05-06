@@ -9,61 +9,26 @@ namespace BotLib.Engine.Messages
         internal InlineKeyboardButton[][] Keyboard;
         private bool MessageIdIsSet = false;
 
-        public TelegramTextMessageWithKeyboard(long ChatId, string Text, ParseMode ParseMode = ParseMode.Markdown, bool DisableWebPagePreview = false) : base(ChatId, Text, ParseMode)
+        public TelegramTextMessageWithKeyboard(long chatId, string text, ParseMode parseMode = ParseMode.Markdown, bool disableWebPagePreview = false) : base(chatId, text, parseMode)
         {
             Keyboard = new InlineKeyboardButton[0][];
-            this.DisableWebPagePreview = DisableWebPagePreview;
+            this.DisableWebPagePreview = disableWebPagePreview;
         }
 
         public int MessageId { get; private set; }
 
         public InlineKeyboardMarkup ReplyMarkup => new InlineKeyboardMarkup(Keyboard);
 
-        public void AddCallbackButton(string Text, string InlineCommand, bool ToBottom = false)
+        public void AddCallbackButton(string text, string inlineCommand, bool toBottom = false)
         {
-            if (Keyboard.Length == 0)
-            {
-                InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
-                InlineKeyboardButton key = InlineKeyboardButton.WithCallbackData(Text, InlineCommand);
-                kb[0] = key;
-                InlineKeyboardButton[][] keyb = new InlineKeyboardButton[1][];
-                keyb[0] = kb;
-                Keyboard = keyb;
-                return;
-            }
-            else
-            {
-                if (!ToBottom)
-                {
-                    if (Keyboard.Last().Length < MaximumButtonsInRow())
-                    {
-                        var l = Keyboard.Last().ToList();
-                        l.Add(InlineKeyboardButton.WithCallbackData(Text, InlineCommand));
-                        Keyboard[Keyboard.Length - 1] = l.ToArray();
-                        return;
-                    }
-                    else
-                    {
-                        InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
-                        InlineKeyboardButton key = InlineKeyboardButton.WithCallbackData(Text, InlineCommand);
-                        kb[0] = key;
-                        var k = Keyboard.ToList();
-                        k.Add(kb);
-                        Keyboard = k.ToArray();
-                        return;
-                    }
-                }
-                else
-                {
-                    InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
-                    InlineKeyboardButton key = InlineKeyboardButton.WithCallbackData(Text, InlineCommand);
-                    kb[0] = key;
-                    var k = Keyboard.ToList();
-                    k.Add(kb);
-                    Keyboard = k.ToArray();
-                    return;
-                }
-            }
+            InlineKeyboardButton keyboardButton = InlineKeyboardButton.WithCallbackData(text, inlineCommand);
+            AddButton(keyboardButton, toBottom);
+        }
+
+        public void AddCallbackWebButton(string text, string url, bool toBottom = false)
+        {
+            InlineKeyboardButton keyboardButton = InlineKeyboardButton.WithUrl(text, url);
+            AddButton(keyboardButton, toBottom);
         }
 
         public TelegramMessage GetMessageToHide()
@@ -74,15 +39,59 @@ namespace BotLib.Engine.Messages
                 return new TelegramEmptyMessage(ChatId);
         }
 
-        public void SetMessageId(int MessageId)
+        public void SetMessageId(int messageId)
         {
-            this.MessageId = MessageId;
+            this.MessageId = messageId;
             this.MessageIdIsSet = true;
         }
 
         protected override void SetMessageType()
         {
             MessageType = TelegramMessageType.TextWithKeyboard;
+        }
+
+        private void AddButton(InlineKeyboardButton key, bool toBottom = false)
+        {
+            if (Keyboard.Length == 0)
+            {
+                InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
+                kb[0] = key;
+                InlineKeyboardButton[][] keyb = new InlineKeyboardButton[1][];
+                keyb[0] = kb;
+                Keyboard = keyb;
+                return;
+            }
+            else
+            {
+                if (!toBottom)
+                {
+                    if (Keyboard.Last().Length < MaximumButtonsInRow())
+                    {
+                        var l = Keyboard.Last().ToList();
+                        l.Add(key);
+                        Keyboard[Keyboard.Length - 1] = l.ToArray();
+                        return;
+                    }
+                    else
+                    {
+                        InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
+                        kb[0] = key;
+                        var k = Keyboard.ToList();
+                        k.Add(kb);
+                        Keyboard = k.ToArray();
+                        return;
+                    }
+                }
+                else
+                {
+                    InlineKeyboardButton[] kb = new InlineKeyboardButton[1];
+                    kb[0] = key;
+                    var k = Keyboard.ToList();
+                    k.Add(kb);
+                    Keyboard = k.ToArray();
+                    return;
+                }
+            }
         }
 
         private int MaximumButtonsInRow()

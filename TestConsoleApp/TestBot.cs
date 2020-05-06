@@ -6,6 +6,8 @@ namespace TestConsoleApp
 {
     internal class TestBot : TelegramFSMBot
     {
+        public const long TEST_CHAT = 123;
+
         public TestBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(token, httpClient, DebugMode)
         {
             StartReceiving();

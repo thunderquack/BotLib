@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -42,7 +43,7 @@ namespace BotLib
                 output = output + "StackTrace : " + ex.StackTrace + "\r\n";
                 ex = ex.InnerException;
             }
-            System.IO.File.AppendAllText("botlog.txt", output, Encoding.UTF8);
+            File.AppendAllText(Path.Combine("botconfig", "botlog.txt"), output, Encoding.UTF8);
             Console.WriteLine(output);
         }
 
