@@ -25,12 +25,12 @@ namespace TestConsoleApp
 
         public override void SetInitStateType()
         {
-            SetInitStateType(typeof(TestFirstState));
+            SetInitStateType(typeof(TestTwoButtonsState));
         }
 
         public override void SetParametricInitStateType()
         {
-            SetInitStateType(typeof(TestFirstState));
+            SetParametricInitStateType(typeof(TestFirstState));
         }
 
         protected override bool IsException(TelegramCommand command)
