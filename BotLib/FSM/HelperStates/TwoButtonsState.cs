@@ -1,29 +1,30 @@
-﻿using BotLib.Engine.Messages;
-using Telegram.Bot.Types.Enums;
+﻿using System.Collections.Generic;
 
 namespace BotLib.FSM.HelperStates
 {
-    public abstract class TwoButtonsState : BotState
+    public abstract class TwoButtonsState : MultipleButtonsState
     {
-        protected abstract string ButtonAText { get; }
-        protected abstract string ButtonBText { get; }
-        protected abstract string ButtonACommand { get; }
-        protected abstract string ButtonBCommand { get; }
-        protected abstract string Message { get; }
-        protected abstract ParseMode MessageParseMode {get;}
-        protected abstract bool DisableWebPreview { get; }
-        private TelegramTextMessageWithKeyboard ActiveMessage;
         protected TwoButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
         {
-           
-        }
-        public override void Init()
-        {
-            ActiveMessage = new TelegramTextMessageWithKeyboard(UserId, Message, MessageParseMode, DisableWebPreview);
-            ActiveMessage.AddCallbackButton(ButtonAText, ButtonACommand);
-            ActiveMessage.AddCallbackButton(ButtonBText, ButtonBCommand);
-            PostMessage(ActiveMessage);
         }
 
+        protected abstract string ButtonACommand { get; }
+
+        protected abstract string ButtonAText { get; }
+
+        protected abstract string ButtonBCommand { get; }
+
+        protected abstract string ButtonBText { get; }
+
+        protected override sealed Dictionary<string, string> ButtonList
+        {
+            get
+            {
+                Dictionary<string, string> bl = new Dictionary<string, string>();
+                bl.Add(ButtonAText, ButtonACommand);
+                bl.Add(ButtonBText, ButtonBCommand);
+                return bl;
+            }
+        }
     }
 }

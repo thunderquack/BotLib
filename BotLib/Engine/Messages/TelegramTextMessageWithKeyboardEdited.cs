@@ -2,17 +2,19 @@
 {
     public class TelegramTextMessageWithKeyboardEdited : TelegramTextMessageWithKeyboard
     {
-        public TelegramTextMessageWithKeyboardEdited(int originalMessageId, TelegramTextMessageWithKeyboard originalMessage, bool disableWebPagePreview = false) : base(originalMessage.ChatId, originalMessage.Text, originalMessage.ParseMode, disableWebPagePreview)
+        public TelegramTextMessageWithKeyboardEdited(int originalMessageId, TelegramTextMessageWithKeyboard originalMessage, bool disableWebPagePreview = false, bool clearKeyboard = false) : base(originalMessage.ChatId, originalMessage.Text, originalMessage.ParseMode, disableWebPagePreview)
         {
             OriginalMessageId = originalMessageId;
-            Keyboard = originalMessage.Keyboard;
+            if (!clearKeyboard)
+                Keyboard = originalMessage.Keyboard;
             SetText(originalMessage.Text);
         }
 
-        public TelegramTextMessageWithKeyboardEdited(int originalMessageId, TelegramTextMessageWithKeyboard originalMessage, string newText, bool disableWebPagePreview = false) : base(originalMessage.ChatId, originalMessage.Text, originalMessage.ParseMode, disableWebPagePreview)
+        public TelegramTextMessageWithKeyboardEdited(int originalMessageId, TelegramTextMessageWithKeyboard originalMessage, string newText, bool disableWebPagePreview = false, bool clearKeyboard = false) : base(originalMessage.ChatId, originalMessage.Text, originalMessage.ParseMode, disableWebPagePreview)
         {
             OriginalMessageId = originalMessageId;
-            Keyboard = originalMessage.Keyboard;
+            if (!clearKeyboard)
+                Keyboard = originalMessage.Keyboard;
             SetText(newText);
         }
 

@@ -7,6 +7,8 @@ namespace TestConsoleApp
     {
         private static void Main(string[] args)
         {
+
+
             TestBot Bot = new TestBot(File.ReadAllText("apikey.txt"));
 
             while (!Bot.Terminate)

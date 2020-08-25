@@ -45,6 +45,14 @@ namespace BotLib.Engine.Messages
             this.MessageIdIsSet = true;
         }
 
+        /// <summary>
+        /// Clears keyboard of the message
+        /// </summary>
+        protected void ClearKeyboard()
+        {
+            Keyboard = new InlineKeyboardButton[0][];
+        }
+
         protected override void SetMessageType()
         {
             MessageType = TelegramMessageType.TextWithKeyboard;
