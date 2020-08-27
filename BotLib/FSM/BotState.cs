@@ -9,7 +9,6 @@ namespace BotLib.FSM
     {
         public int LastMessageId;
         protected bool Go = false;
-        protected BotMachine Machine;
 
         public BotState(int UserId, BotMachine Machine)
         {
@@ -22,6 +21,7 @@ namespace BotLib.FSM
         public event EventHandler<NewStateEventArgs> StateIsChanged;
 
         public int UserId { get; }
+        protected virtual BotMachine Machine { get; }
 
         /// <summary>
         /// This function is being called by Machine after events are re-subscribed

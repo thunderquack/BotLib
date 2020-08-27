@@ -23,7 +23,7 @@ namespace BotLib.FSM
         public event EventHandler<ParametricStartEventArgs> ParametricStartReceived;
 
         public BotState ActiveState { get; private set; }
-        public TelegramFSMBot Bot { get; }
+        public virtual TelegramFSMBot Bot { get; }
         public string BotMe => Bot.Me;
         public int LastMessageId { get; private set; }
 
