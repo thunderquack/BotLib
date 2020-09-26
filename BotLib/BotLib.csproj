@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.9.10</AssemblyVersion>
-    <FileVersion>1.0.9.10</FileVersion>
-    <Version>1.0.9.10</Version>
+    <AssemblyVersion>1.0.9.11</AssemblyVersion>
+    <FileVersion>1.0.9.11</FileVersion>
+    <Version>1.0.9.11</Version>
     <Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2020</Copyright>
     <Authors>Egor Ivanov</Authors>
     <Description>Telegram Bot library which manipulates with states like Finite State Machine</Description>

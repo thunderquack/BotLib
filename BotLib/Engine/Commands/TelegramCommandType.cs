@@ -7,6 +7,7 @@
         FileSent,
         ButtonPressed,
         PaymentReceived,
-        Empty
+        Empty,
+        Geo
     }
 }

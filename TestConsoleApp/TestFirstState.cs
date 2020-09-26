@@ -36,6 +36,14 @@ namespace TestConsoleApp
                     }
                 }
             }
+            else if (command.CommandType == TelegramCommandType.Geo)
+            {
+                PostMessage(ActiveMessage.GetMessageToHide());
+                float Latitude = (command as TelegramGeoCommand).Latitude;
+                float Longitude = (command as TelegramGeoCommand).Longitude;
+                TelegramTextMessage m = new TelegramTextMessage(UserId, string.Format("{0} {1}", Latitude, Longitude));
+                PostMessage(m);
+            }
             else
                 Machine.Bot.Terminate = true;
         }

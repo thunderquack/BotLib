@@ -24,9 +24,9 @@ namespace BotLib.Engine
         protected AdminTasker AdminTasker;
         protected Dictionary<long, int> LastMessageIds;
         private const string CONFIG_DIR = "botconfig";
-        private string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
         private const string PARAMETRIC_COMMAND_PALETTE = "\\/start (.*)";
         private Type BotMachineType;
+        private string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
         private FSMBotConfig FSMConfig;
         private Type InitStateType;
         private Dictionary<int, BotMachine> Machines;
@@ -266,6 +266,14 @@ namespace BotLib.Engine
             if (e.Message.Type == MessageType.ChatMembersAdded)
             {
                 Console.WriteLine(e.Message.NewChatMembers);
+            }
+            if (e.Message.Type == MessageType.Location || (e.Message.Type == MessageType.Venue && e.Message.Location != null))
+            {
+                float[] coords = new float[2];
+                coords[0] = e.Message.Location.Latitude;
+                coords[1] = e.Message.Location.Longitude;
+                TelegramGeoCommand command = new TelegramGeoCommand(e.Message.From.Id, coords);
+                Dispatch(command);
             }
         }
 
