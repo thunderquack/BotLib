@@ -50,6 +50,11 @@ namespace BotLib.FSM
             GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message, Immediately = immediately });
         }
 
+        protected void PostNonPriorityMessage(TelegramMessage message)
+        {
+            GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message, Immediately = false }, true);
+        }
+
         protected void Type()
         {
             TelegramTypingMessage typingMessage = new TelegramTypingMessage(UserId);
@@ -70,11 +75,6 @@ namespace BotLib.FSM
             else
                 handler = MessageGenerated;
             handler?.Invoke(this, e);
-        }
-
-        private void PostNonPriorityMessage(TelegramMessage message)
-        {
-            GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message, Immediately = false }, true);
         }
     }
 }
