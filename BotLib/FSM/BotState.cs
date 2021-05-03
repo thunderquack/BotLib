@@ -18,6 +18,8 @@ namespace BotLib.FSM
 
         public event EventHandler<TelegramMessageEventArgs> MessageGenerated;
 
+        public event EventHandler<TelegramMessageEventArgs> NonPriorityMessageGenerated;
+
         public event EventHandler<NewStateEventArgs> StateIsChanged;
 
         public int UserId { get; }
@@ -43,9 +45,9 @@ namespace BotLib.FSM
             ChangeState(new NewStateEventArgs() { BotState = state });
         }
 
-        protected void PostMessage(TelegramMessage message)
+        protected void PostMessage(TelegramMessage message, bool immediately = false)
         {
-            GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message });
+            GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message, Immediately = immediately });
         }
 
         protected void Type()
@@ -60,10 +62,19 @@ namespace BotLib.FSM
             handler?.Invoke(this, e);
         }
 
-        private void GenerateMessage(TelegramMessageEventArgs e)
+        private void GenerateMessage(TelegramMessageEventArgs e, bool nonPriorityQueue = false)
         {
-            EventHandler<TelegramMessageEventArgs> handler = MessageGenerated;
+            EventHandler<TelegramMessageEventArgs> handler;
+            if (nonPriorityQueue)
+                handler = NonPriorityMessageGenerated;
+            else
+                handler = MessageGenerated;
             handler?.Invoke(this, e);
+        }
+
+        private void PostNonPriorityMessage(TelegramMessage message)
+        {
+            GenerateMessage(new TelegramMessageEventArgs() { TelegramMessage = message, Immediately = false }, true);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace TestConsoleApp
 
         public override void SetInitStateType()
         {
-            SetInitStateType(typeof(TestFirstState));
+            SetInitStateType(typeof(TestMultipleButtonsState));
         }
 
         public override void SetParametricInitStateType()

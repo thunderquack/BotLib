@@ -21,6 +21,7 @@ namespace BotLib.Engine
     {
         public string Me;
         public bool Terminate = false;
+        internal TelegramMessageSender NonPriorityMessageSender;
         protected AdminTasker AdminTasker;
         protected Dictionary<long, int> LastMessageIds;
         private const string CONFIG_DIR = "botconfig";
@@ -33,10 +34,11 @@ namespace BotLib.Engine
         private Type ParametricInitStateType;
         private TelegramMessageSender Sender;
 
-        public TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(token, httpClient)
+        public TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
             this.DebugMode = DebugMode;
-            Sender = new TelegramMessageSender(this);
+            Sender = new TelegramMessageSender(this, sendingInterval);
+            NonPriorityMessageSender = new TelegramMessageSender(this, nonPrioritySendingInterval);
             Machines = new Dictionary<int, BotMachine>();
             LastMessageIds = new Dictionary<long, int>();
             AdminTasker = new AdminTasker(this);
@@ -68,6 +70,30 @@ namespace BotLib.Engine
         public bool DebugMode { get; } = false;
 
         public string PaymentsKey { get; private set; }
+
+        protected double MessageSenderInterval
+        {
+            get
+            {
+                return Sender.Interval;
+            }
+            set
+            {
+                Sender.SetNewInterval(value);
+            }
+        }
+
+        protected double NonPriorityMessageSenderInterval
+        {
+            get
+            {
+                return NonPriorityMessageSender.Interval;
+            }
+            set
+            {
+                NonPriorityMessageSender.SetNewInterval(value);
+            }
+        }
 
         public BotMachine CreateMachine(int UserId)
         {

@@ -55,7 +55,15 @@ namespace BotLib.FSM
 
         private void MessageGeneratedEvent(object sender, TelegramMessageEventArgs e)
         {
-            Sender.Enqueue(e.TelegramMessage);
+            if (e.Immediately)
+                Sender.Add(e.TelegramMessage);
+            else
+                Sender.Enqueue(e.TelegramMessage);
+        }
+
+        private void NonPriorityMessageGeneratedEvent(object sender, TelegramMessageEventArgs e)
+        {
+            Bot.NonPriorityMessageSender.Enqueue(e.TelegramMessage);
         }
 
         private void StateIsChanged(object sender, NewStateEventArgs e)
@@ -68,6 +76,7 @@ namespace BotLib.FSM
         {
             ActiveState.MessageGenerated += MessageGeneratedEvent;
             ActiveState.StateIsChanged += StateIsChanged;
+            ActiveState.NonPriorityMessageGenerated += NonPriorityMessageGeneratedEvent;
             ActiveState.Init();
         }
     }

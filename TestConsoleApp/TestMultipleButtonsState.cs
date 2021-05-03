@@ -6,9 +6,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace TestConsoleApp
 {
-    internal class TestTwoButtonsState : MultipleCheckBoxButtonsState
+    internal class TestMultipleButtonsState : MultipleCheckBoxButtonsState
     {
-        public TestTwoButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        public TestMultipleButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
         {
         }
 

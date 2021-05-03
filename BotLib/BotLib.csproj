@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.9.11</AssemblyVersion>
-    <FileVersion>1.0.9.11</FileVersion>
-    <Version>1.0.9.11</Version>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyVersion>1.0.9.12</AssemblyVersion>
+    <FileVersion>1.0.9.12</FileVersion>
+    <Version>1.0.9.12</Version>
     <Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2020</Copyright>
     <Authors>Egor Ivanov</Authors>
     <Description>Telegram Bot library which manipulates with states like Finite State Machine</Description>
@@ -38,8 +38,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="newtonsoft.json" Version="12.0.3" />
-    <PackageReference Include="Telegram.Bot" Version="15.6.0" />
+    <PackageReference Include="newtonsoft.json" Version="13.0.1" />
+    <PackageReference Include="Telegram.Bot" Version="15.7.1" />
   </ItemGroup>
 
 </Project>
