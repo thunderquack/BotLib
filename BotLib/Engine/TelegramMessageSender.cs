@@ -116,7 +116,16 @@ namespace BotLib.Engine
                             catch (Exception error)
                             {
                                 BotUtils.LogException(error);
-                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
+                                try
+                                {
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
+                                    msg.SetMessageId(result);
+                                    bot.SetLastMessageId(msg.ChatId, result);
+                                }
+                                catch (Exception internalError)
+                                {
+                                    BotUtils.LogException(internalError);
+                                }
                             }
                         }
                         break;
@@ -149,7 +158,15 @@ namespace BotLib.Engine
                             catch (Exception error)
                             {
                                 BotUtils.LogException(error);
-                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup).Result.MessageId;
+                                try
+                                {
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup).Result.MessageId;
+                                    bot.SetLastMessageId(msg.ChatId, result);
+                                }
+                                catch (Exception internalError)
+                                {
+                                    BotUtils.LogException(internalError);
+                                }
                             }
                         }
                         break;
