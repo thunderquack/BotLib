@@ -10,6 +10,7 @@ namespace TestConsoleApp
 
         public TestBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(token, httpClient, DebugMode)
         {
+            SenderLoggingEnabled = true;
             StartReceiving();
         }
 

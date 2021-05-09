@@ -56,10 +56,9 @@ namespace BotLib.Engine
 
         public delegate void MessagePostedDelegate(long ChatId, int MessageId);
 
-        //TODO: public event EventHandler<ChatMembersAddedEventArgs> ChatMembersAdded;
-
         public event EventHandler<FileTooBigEventArgs> FileTooBig;
 
+        //TODO: public event EventHandler<ChatMembersAddedEventArgs> ChatMembersAdded;
         public event MessagePostedDelegate MessagePosted;
 
         public event EventHandler<ParametricStartEventArgs> ParametricStartReceived;
@@ -67,9 +66,34 @@ namespace BotLib.Engine
         public event EventHandler<PaymentEventArgs> PaymentReceived;
 
         public bool AnswerToFilesWithType { get; protected set; } = false;
+
         public bool DebugMode { get; } = false;
 
+        public bool NonPriorityMessageSenderLoggingEnabled
+        {
+            get
+            {
+                return NonPriorityMessageSender.LoggingEnabled;
+            }
+            set
+            {
+                NonPriorityMessageSender.LoggingEnabled = value;
+            }
+        }
+
         public string PaymentsKey { get; private set; }
+
+        public bool SenderLoggingEnabled
+        {
+            get
+            {
+                return Sender.LoggingEnabled;
+            }
+            set
+            {
+                Sender.LoggingEnabled = value;
+            }
+        }
 
         protected double MessageSenderInterval
         {

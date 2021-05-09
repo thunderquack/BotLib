@@ -19,12 +19,13 @@ namespace BotLib.Engine
         /// Creates an instance of Sender
         /// </summary>
         /// <param name="bot">Reference to the bot</param>
-        public TelegramMessageSender(TelegramFSMBot bot)
+        public TelegramMessageSender(TelegramFSMBot bot, bool logMessage = false)
         {
             this.bot = bot;
             Queue = new LinkedList<TelegramMessage>();
             SendTimer = new Timer(SENDING_INTERVAL);
             SendTimer.Elapsed += TimeToSend;
+            LoggingEnabled = logMessage;
             SendTimer.Start();
         }
 
@@ -33,12 +34,13 @@ namespace BotLib.Engine
         /// </summary>
         /// <param name="bot">Reference to the bot</param>
         /// <param name="SendingInterval">Interval of sending in milliseconds</param>
-        public TelegramMessageSender(TelegramFSMBot bot, int SendingInterval = 50)
+        public TelegramMessageSender(TelegramFSMBot bot, int SendingInterval = 50, bool logMessage = false)
         {
             this.bot = bot;
             Queue = new LinkedList<TelegramMessage>();
             SendTimer = new Timer(SendingInterval);
             SendTimer.Elapsed += TimeToSend;
+            LoggingEnabled = logMessage;
             SendTimer.Start();
         }
 
@@ -49,6 +51,8 @@ namespace BotLib.Engine
                 return SendTimer.Interval;
             }
         }
+
+        public bool LoggingEnabled { get; set; } = false;
 
         public void Add(TelegramMessage telegramMessage)
         {
@@ -73,6 +77,16 @@ namespace BotLib.Engine
                 TelegramMessage message;
                 message = Queue.First.Value;
                 Queue.RemoveFirst();
+                if (LoggingEnabled)
+                    try
+                    {
+                        Console.WriteLine(DateTime.UtcNow);
+                        Console.WriteLine(message.ToString());
+                    }
+                    catch (Exception err)
+                    {
+                        BotUtils.LogException(err);
+                    }
                 switch (message.MessageType)
                 {
                     case TelegramMessageType.Empty:
