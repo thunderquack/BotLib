@@ -85,13 +85,21 @@ namespace BotLib.Engine
                             try
                             {
                                 result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, msg.ParseMode, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
+                                bot.SetLastMessageId(msg.ChatId, result);
                             }
                             catch (Exception error)
                             {
-                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default).Result.MessageId;
                                 BotUtils.LogException(error);
+                                try
+                                {
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default).Result.MessageId;
+                                    bot.SetLastMessageId(msg.ChatId, result);
+                                }
+                                catch (Exception internalError)
+                                {
+                                    BotUtils.LogException(internalError);
+                                }
                             }
-                            bot.SetLastMessageId(msg.ChatId, result);
                         }
                         break;
 
@@ -102,30 +110,30 @@ namespace BotLib.Engine
                             try
                             {
                                 result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, msg.ParseMode, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
+                                msg.SetMessageId(result);
+                                bot.SetLastMessageId(msg.ChatId, result);
                             }
                             catch (Exception error)
                             {
-                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
                                 BotUtils.LogException(error);
+                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
                             }
-                            bot.SetLastMessageId(msg.ChatId, result);
-                            msg.SetMessageId(result);
                         }
                         break;
 
                     case TelegramMessageType.TextWithKeyboardHide:
                         {
                             TelegramTextMessageWithKeyboardHide msg = message as TelegramTextMessageWithKeyboardHide;
-                            int result = -1;
+                            int result;
                             try
                             {
                                 result = bot.EditMessageReplyMarkupAsync(msg.ChatId, msg.OriginalMessageId).Result.MessageId;
+                                bot.SetLastMessageId(msg.ChatId, result);
                             }
                             catch (Exception error)
                             {
                                 BotUtils.LogException(error);
                             }
-                            bot.SetLastMessageId(msg.ChatId, result);
                         }
                         break;
 
@@ -136,13 +144,13 @@ namespace BotLib.Engine
                             try
                             {
                                 result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, msg.ParseMode, replyMarkup: msg.ReplyMarkup).Result.MessageId;
+                                bot.SetLastMessageId(msg.ChatId, result);
                             }
                             catch (Exception error)
                             {
-                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup).Result.MessageId;
                                 BotUtils.LogException(error);
+                                result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup).Result.MessageId;
                             }
-                            bot.SetLastMessageId(msg.ChatId, result);
                         }
                         break;
 
