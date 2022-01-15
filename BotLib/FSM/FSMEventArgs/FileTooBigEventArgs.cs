@@ -4,7 +4,7 @@ namespace BotLib.FSM.FSMEventArgs
 {
     public class FileTooBigEventArgs : EventArgs
     {
-        public FileTooBigEventArgs(long ChatId, int UserId, int MessageId, string FileName, string FileId, int Size)
+        public FileTooBigEventArgs(long ChatId, long UserId, int MessageId, string FileName, string FileId, int? Size)
         {
             this.FileName = FileName;
             this.Size = Size;
@@ -18,7 +18,7 @@ namespace BotLib.FSM.FSMEventArgs
         public string FileId { get; }
         public string FileName { get; }
         public int MessageId { get; }
-        public int Size { get; }
-        public int UserId { get; }
+        public int? Size { get; }
+        public long UserId { get; }
     }
 }

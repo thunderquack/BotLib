@@ -10,7 +10,7 @@ namespace BotLib.FSM
         public int LastMessageId;
         protected bool Go = false;
 
-        public BotState(int UserId, BotMachine Machine)
+        public BotState(long UserId, BotMachine Machine)
         {
             this.UserId = UserId;
             this.Machine = Machine;
@@ -22,7 +22,7 @@ namespace BotLib.FSM
 
         public event EventHandler<NewStateEventArgs> StateIsChanged;
 
-        public int UserId { get; }
+        public long UserId { get; }
         protected virtual BotMachine Machine { get; }
 
         /// <summary>

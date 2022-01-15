@@ -4,18 +4,18 @@ namespace BotLib.Engine.AdminTasks
 {
     public class ChatmemberMembershipAdminTask : AdminTask
     {
-        public ChatmemberMembershipAdminTask(long ChatId, int UserId) : base(ChatId, AdminTaskType.ChatmemberStatus)
+        public ChatmemberMembershipAdminTask(long ChatId, long UserId) : base(ChatId, AdminTaskType.ChatmemberStatus)
         {
             this.UserId = UserId;
         }
 
-        public ChatmemberMembershipAdminTask(long ChatId, int UserId, DateTime DelayUntil) : base(ChatId, AdminTaskType.ChatmemberStatus, DelayUntil)
+        public ChatmemberMembershipAdminTask(long ChatId, long UserId, DateTime DelayUntil) : base(ChatId, AdminTaskType.ChatmemberStatus, DelayUntil)
         {
             this.UserId = UserId;
         }
 
         public bool Membership { get; private set; } = false;
-        public int UserId { get; }
+        public long UserId { get; }
 
         internal void SetMember()
         {

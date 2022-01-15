@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -54,7 +55,7 @@ namespace BotLib.Engine.AdminTasks
                         break;
 
                     case AdminTaskType.ChatmemberCount:
-                        (task as ChatmemberCountAdminTask).SetCount(Bot.GetChatMembersCountAsync(task.ChatId).Result);
+                        (task as ChatmemberCountAdminTask).SetCount(Bot.GetChatMemberCountAsync(task.ChatId).Result);
                         break;
 
                     case AdminTaskType.ChatmemberInfo:
@@ -64,8 +65,8 @@ namespace BotLib.Engine.AdminTasks
                         }
                         break;
 
-                    case AdminTaskType.ChatmemberKick:
-                        Bot.KickChatMemberAsync(task.ChatId, (task as ChatmemberKickAdminTask).UserId);
+                    case AdminTaskType.ChatmemberKick:                        
+                        Bot.BanChatMemberAsync(task.ChatId, (task as ChatmemberKickAdminTask).UserId);
                         break;
 
                     case AdminTaskType.ChatmemberStatus:
@@ -74,7 +75,7 @@ namespace BotLib.Engine.AdminTasks
                             if (cm.Status == ChatMemberStatus.Administrator ||
                                 cm.Status == ChatMemberStatus.Creator ||
                                 cm.Status == ChatMemberStatus.Member ||
-                                (cm.Status == ChatMemberStatus.Restricted && cm.IsMember.Value))
+                                (cm.Status == ChatMemberStatus.Restricted && (cm as ChatMemberRestricted).IsMember))
                                 (task as ChatmemberMembershipAdminTask).SetMember();
                         }
                         break;
@@ -93,7 +94,7 @@ namespace BotLib.Engine.AdminTasks
                     case AdminTaskType.GetChatAdmins:
                         {
                             ChatMember[] Members = Bot.GetChatAdministratorsAsync(task.ChatId).Result;
-                            List<int> AdminList = new List<int>();
+                            List<long> AdminList = new List<long>();
                             foreach (ChatMember member in Members)
                             {
                                 AdminList.Add(member.User.Id);

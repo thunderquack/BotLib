@@ -8,7 +8,7 @@ namespace BotLib.FSM.HelperStates
     {
         protected TelegramTextMessageWithKeyboard ActiveMessage;
 
-        public MultipleButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        public MultipleButtonsState(long UserId, BotMachine Machine) : base(UserId, Machine)
         {
         }
 

@@ -15,7 +15,7 @@ namespace BotLib.FSM.HelperStates
         private string MainButtonCommand;
         private Random Random = new Random();
 
-        public MultipleCheckBoxButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        public MultipleCheckBoxButtonsState(long UserId, BotMachine Machine) : base(UserId, Machine)
         {
             CheckedOptions = new List<string>();
             GenerateMainButtonCommand();

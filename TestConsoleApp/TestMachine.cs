@@ -6,7 +6,7 @@ namespace TestConsoleApp
 {
     internal class TestMachine : BotMachine
     {
-        public TestMachine(int UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot) : base(UserId, sender, InitStateType, Bot)
+        public TestMachine(long UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot) : base(UserId, sender, InitStateType, Bot)
         {
         }
     }

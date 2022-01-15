@@ -8,7 +8,7 @@ namespace TestConsoleApp
 {
     internal class TestMultipleButtonsState : MultipleCheckBoxButtonsState
     {
-        public TestMultipleButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        public TestMultipleButtonsState(long UserId, BotMachine Machine) : base(UserId, Machine)
         {
         }
 
@@ -35,13 +35,13 @@ namespace TestConsoleApp
         protected override bool DisableWebPreview => false;
         protected override string MainButton => "Продолжить";
         protected override string Message => "Что вам ещё потребуется?";
-        protected override ParseMode MessageParseMode => ParseMode.Default;
+        protected override ParseMode MessageParseMode => ParseMode.Markdown;
 
         protected override void Done(List<string> chosenValues)
         {
-            TelegramTextMessage message = new TelegramTextMessage(UserId, string.Join("\n", chosenValues), ParseMode.Default);
+            TelegramTextMessage message = new TelegramTextMessage(UserId, string.Join("\n", chosenValues), ParseMode.Markdown);
             PostMessage(message);
-            Machine.Bot.Terminate = true;
+            Machine.Bot.terminate = true;
         }
     }
 }

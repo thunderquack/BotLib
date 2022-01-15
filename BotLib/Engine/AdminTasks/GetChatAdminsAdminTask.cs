@@ -14,9 +14,9 @@ namespace BotLib.Engine.AdminTasks
         {
         }
 
-        public List<int> Admins { get; private set; }
+        public List<long> Admins { get; private set; }
 
-        internal void SetAdmins(List<int> Admins)
+        internal void SetAdmins(List<long> Admins)
         {
             this.Admins = Admins;
             SetComplete();

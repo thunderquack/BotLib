@@ -8,7 +8,7 @@ namespace BotLib.Engine.Commands
     {
         public string FileName { get; }
 
-        public TelegramFileCommand(int UserId, object Argument, string FileName) : base(TelegramCommandType.FileSent, UserId, Argument)
+        public TelegramFileCommand(long UserId, object Argument, string FileName) : base(TelegramCommandType.FileSent, UserId, Argument)
         {
             this.FileName = FileName;
         }

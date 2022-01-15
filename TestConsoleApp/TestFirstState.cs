@@ -11,7 +11,7 @@ namespace TestConsoleApp
         public string MessageTemplate = "Message:\n{0}";
         private TelegramTextMessageWithKeyboard ActiveMessage;
 
-        public TestFirstState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        public TestFirstState(long UserId, BotMachine Machine) : base(UserId, Machine)
         {
         }
 
@@ -39,13 +39,13 @@ namespace TestConsoleApp
             else if (command.CommandType == TelegramCommandType.Geo)
             {
                 PostMessage(ActiveMessage.GetMessageToHide());
-                float Latitude = (command as TelegramGeoCommand).Latitude;
-                float Longitude = (command as TelegramGeoCommand).Longitude;
+                double Latitude = (command as TelegramGeoCommand).Latitude;
+                double Longitude = (command as TelegramGeoCommand).Longitude;
                 TelegramTextMessage m = new TelegramTextMessage(UserId, string.Format("{0} {1}", Latitude, Longitude));
                 PostMessage(m);
             }
             else
-                Machine.Bot.Terminate = true;
+                Machine.Bot.terminate = true;
         }
     }
 }

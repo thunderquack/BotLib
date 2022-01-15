@@ -9,7 +9,7 @@ namespace TestConsoleApp
         {
             TestBot Bot = new TestBot(File.ReadAllText("apikey.txt"));
 
-            while (!Bot.Terminate)
+            while (!Bot.terminate)
             {
                 Thread.Sleep(1000);
             }

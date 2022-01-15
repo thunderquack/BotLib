@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Timers;
+using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 
@@ -106,7 +107,7 @@ namespace BotLib.Engine
                                 BotUtils.LogException(error);
                                 try
                                 {
-                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default).Result.MessageId;
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Markdown).Result.MessageId;
                                     bot.SetLastMessageId(msg.ChatId, result);
                                 }
                                 catch (Exception internalError)
@@ -132,7 +133,7 @@ namespace BotLib.Engine
                                 BotUtils.LogException(error);
                                 try
                                 {
-                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Markdown, replyMarkup: msg.ReplyMarkup, disableWebPagePreview: msg.DisableWebPagePreview).Result.MessageId;
                                     msg.SetMessageId(result);
                                     bot.SetLastMessageId(msg.ChatId, result);
                                 }
@@ -174,7 +175,7 @@ namespace BotLib.Engine
                                 BotUtils.LogException(error);
                                 try
                                 {
-                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Default, replyMarkup: msg.ReplyMarkup).Result.MessageId;
+                                    result = bot.SendTextMessageAsync(msg.ChatId, msg.Text, ParseMode.Markdown, replyMarkup: msg.ReplyMarkup).Result.MessageId;
                                     bot.SetLastMessageId(msg.ChatId, result);
                                 }
                                 catch (Exception internalError)
@@ -192,7 +193,7 @@ namespace BotLib.Engine
                             {
                                 try
                                 {
-                                    int result = bot.SendInvoiceAsync(msg.ChatId, msg.Title, msg.Description, msg.InvoiceId, bot.PaymentsKey, "startParameter", "RUB", msg.Prices).Result.MessageId;
+                                    int result = bot.SendInvoiceAsync(msg.ChatId, msg.Title, msg.Description, msg.InvoiceId, bot.PaymentsKey, "RUB", msg.Prices).Result.MessageId;
                                     bot.SetLastMessageId(msg.ChatId, result);
                                 }
                                 catch (Exception error)
@@ -251,7 +252,7 @@ namespace BotLib.Engine
                             TelegramTextMessageWithKeyboardEdited msg = message as TelegramTextMessageWithKeyboardEdited;
                             try
                             {
-                                int result = bot.EditMessageTextAsync(msg.ChatId, msg.OriginalMessageId, msg.Text, msg.ParseMode, msg.DisableWebPagePreview, msg.Keyboard).Result.MessageId;
+                                int result = bot.EditMessageTextAsync(msg.ChatId, msg.OriginalMessageId, msg.Text, msg.ParseMode, disableWebPagePreview: msg.DisableWebPagePreview, replyMarkup: msg.Keyboard).Result.MessageId;
                                 msg.SetMessageId(result);
                                 bot.SetLastMessageId(msg.ChatId, result);
                             }

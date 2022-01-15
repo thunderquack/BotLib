@@ -4,7 +4,7 @@ namespace BotLib.FSM.HelperStates
 {
     public abstract class TwoButtonsState : MultipleButtonsState
     {
-        protected TwoButtonsState(int UserId, BotMachine Machine) : base(UserId, Machine)
+        protected TwoButtonsState(long UserId, BotMachine Machine) : base(UserId, Machine)
         {
         }
 

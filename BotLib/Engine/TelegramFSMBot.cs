@@ -12,34 +12,39 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using Telegram.Bot;
-using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Extensions.Polling;
+using System.Threading.Tasks;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types;
+using System.Threading;
+using Telegram.Bot.Types.Payments;
 
 namespace BotLib.Engine
 {
     public abstract class TelegramFSMBot : TelegramBotClient
     {
-        public string Me;
-        public bool Terminate = false;
+        public string me;
+        public bool terminate = false;
         internal TelegramMessageSender NonPriorityMessageSender;
         protected AdminTasker AdminTasker;
         protected Dictionary<long, int> LastMessageIds;
         private const string CONFIG_DIR = "botconfig";
         private const string PARAMETRIC_COMMAND_PALETTE = "\\/start (.*)";
         private Type BotMachineType;
-        private string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
-        private FSMBotConfig FSMConfig;
+        private readonly string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
+        private readonly FSMBotConfig FSMConfig;
         private Type InitStateType;
-        private Dictionary<int, BotMachine> Machines;
+        private readonly Dictionary<long, BotMachine> Machines;
         private Type ParametricInitStateType;
-        private TelegramMessageSender Sender;
+        private readonly TelegramMessageSender Sender;
 
         public TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
             this.DebugMode = DebugMode;
             Sender = new TelegramMessageSender(this, sendingInterval);
             NonPriorityMessageSender = new TelegramMessageSender(this, nonPrioritySendingInterval);
-            Machines = new Dictionary<int, BotMachine>();
+            Machines = new Dictionary<long, BotMachine>();
             LastMessageIds = new Dictionary<long, int>();
             AdminTasker = new AdminTasker(this);
             FSMConfig = new FSMBotConfig(configFile);
@@ -49,9 +54,18 @@ namespace BotLib.Engine
             CheckBotMachineType();
             CheckInitStateType();
             Init();
-            OnMessage += TelegramMessage;
-            OnCallbackQuery += TelegramCallbackQuery;
-            OnUpdate += TelegramUpdate;
+        }
+
+        public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            var ErrorMessage = exception switch
+            {
+                ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+                _ => exception.ToString()
+            };
+
+            Console.WriteLine(ErrorMessage);
+            return Task.CompletedTask;
         }
 
         public delegate void MessagePostedDelegate(long ChatId, int MessageId);
@@ -119,7 +133,7 @@ namespace BotLib.Engine
             }
         }
 
-        public BotMachine CreateMachine(int UserId)
+        public BotMachine CreateMachine(long UserId)
         {
             KillMachine(UserId);
             BotMachine machine = Activator.CreateInstance(BotMachineType, UserId, Sender, InitStateType, this) as BotMachine;
@@ -127,7 +141,7 @@ namespace BotLib.Engine
             return machine;
         }
 
-        public BotMachine CreateMachine(int UserId, Type InitialStateType)
+        public BotMachine CreateMachine(long UserId, Type InitialStateType)
         {
             KillMachine(UserId);
             BotMachine machine = Activator.CreateInstance(BotMachineType, UserId, Sender, InitialStateType, this) as BotMachine;
@@ -135,7 +149,7 @@ namespace BotLib.Engine
             return machine;
         }
 
-        public void KillMachine(int UserId)
+        public void KillMachine(long UserId)
         {
             if (MachineExists(UserId))
                 Machines.Remove(UserId);
@@ -234,12 +248,22 @@ namespace BotLib.Engine
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             string version = fvi.FileVersion;
-            Me = GetMeAsync().Result.Username;
-            Console.WriteLine(string.Format("Bot {0}, BotLib v.{1} is starting, previous start time is {2}", Me, version, FSMConfig.StartTime));
+            me = this.GetMeAsync().Result.Username;
+            Console.WriteLine(string.Format("Bot {0}, BotLib v.{1} is starting, previous start time is {2}", me, version, FSMConfig.StartTime));
             FSMConfig.StartTime = DateTime.UtcNow;
         }
 
-        private bool MachineExists(int UserId)
+        protected virtual void StartReceiving()
+        {
+            using var cts = new CancellationTokenSource();
+            ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
+            this.StartReceiving(HandleUpdateAsync,
+                               HandleErrorAsync,
+                               receiverOptions,
+                               cts.Token);
+        }
+
+        private bool MachineExists(long UserId)
         {
             return Machines.ContainsKey(UserId);
         }
@@ -251,107 +275,136 @@ namespace BotLib.Engine
             DispatchParametricCommand(e);
         }
 
-        private void TelegramCallbackQuery(object sender, CallbackQueryEventArgs e)
+        private static async Task TelegramCallbackQuery(TelegramFSMBot bot, CallbackQuery callbackQuery)
         {
-            int UserId = e.CallbackQuery.From.Id;
-            string CallbackData = e.CallbackQuery.Data;
+            long UserId = callbackQuery.From.Id;
+            string CallbackData = callbackQuery.Data;
             TelegramButtonPressedCommand command = new TelegramButtonPressedCommand(UserId, CallbackData);
-            AnswerCallbackQueryAsync(e.CallbackQuery.Id);
-            Dispatch(command);
+            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            bot.Dispatch(command);
         }
 
-        private void TelegramMessage(object sender, MessageEventArgs e)
-        {
-            if (e.Message.Type == MessageType.Text)
+        private static async Task TelegramMessage(TelegramFSMBot bot, Message message)
+        {            
+            if (message.Type == MessageType.Text)
             {
-                if (Regex.IsMatch(e.Message.Text, PARAMETRIC_COMMAND_PALETTE))
+                if (Regex.IsMatch(message.Text, PARAMETRIC_COMMAND_PALETTE))
                 {
-                    string ParametricCommand = Regex.Match(e.Message.Text, PARAMETRIC_COMMAND_PALETTE).Groups[1].Value;
-                    ReceiveParametricStart(new ParametricStartEventArgs() { ParametricCommand = ParametricCommand, UserId = e.Message.From.Id });
+                    string ParametricCommand = Regex.Match(message.Text, PARAMETRIC_COMMAND_PALETTE).Groups[1].Value;
+                    bot.ReceiveParametricStart(new ParametricStartEventArgs() { ParametricCommand = ParametricCommand, UserId = message.From.Id });
                     return;
                 }
-                TelegramTextCommand command = new TelegramTextCommand(e.Message.From.Id, e.Message.Text);
-                Dispatch(command);
+                TelegramTextCommand command = new TelegramTextCommand(message.From.Id, message.Text);
+                bot.Dispatch(command);
             }
-            if (e.Message.Type == MessageType.Photo || e.Message.Type == MessageType.Document)
+            if (message.Type == MessageType.Photo || message.Type == MessageType.Document)
             {
                 MemoryStream ms = new MemoryStream();
                 string FileName = null;
                 TelegramCommand command = null;
-                switch (e.Message.Type)
+                switch (message.Type)
                 {
                     case MessageType.Photo:
-                        GetInfoAndDownloadFileAsync(e.Message.Photo.Last().FileId, ms).Wait();
+                        bot.GetInfoAndDownloadFileAsync(message.Photo.Last().FileId, ms).Wait();
                         ms.Seek(0, SeekOrigin.Begin);
-                        command = new TelegramPhotoCommand(e.Message.From.Id, ms.ToArray());
+                        command = new TelegramPhotoCommand(message.From.Id, ms.ToArray());
                         break;
 
                     case MessageType.Document:
-                        if (e.Message.Document.FileSize < 19922944)
+                        if (message.Document.FileSize < 19922944)
                         {
-                            if (AnswerToFilesWithType) Sender.Enqueue(new TelegramTypingMessage(e.Message.From.Id));
-                            GetInfoAndDownloadFileAsync(e.Message.Document.FileId, ms).Wait();
+                            if (bot.AnswerToFilesWithType) bot.Sender.Enqueue(new TelegramTypingMessage(message.From.Id));
+                            bot.GetInfoAndDownloadFileAsync(message.Document.FileId, ms).Wait();
                             ms.Seek(0, SeekOrigin.Begin);
-                            FileName = e.Message.Document.FileName;
-                            command = new TelegramFileCommand(e.Message.From.Id, ms.ToArray(), FileName);
+                            FileName = message.Document.FileName;
+                            command = new TelegramFileCommand(message.From.Id, ms.ToArray(), FileName);
                         }
                         else
                         {
-                            FileTooBigEventArgs ftbea = new FileTooBigEventArgs(e.Message.Chat.Id, e.Message.From.Id, e.Message.MessageId, e.Message.Document.FileName, e.Message.Document.FileId, e.Message.Document.FileSize);
-                            EventHandler<FileTooBigEventArgs> handler = FileTooBig;
-                            handler.Invoke(this, ftbea);
-                            command = new TelegramEmptyCommand(e.Message.From.Id);
+                            FileTooBigEventArgs ftbea = new FileTooBigEventArgs(message.Chat.Id, message.From.Id, message.MessageId, message.Document.FileName, message.Document.FileId, message.Document.FileSize);
+                            EventHandler<FileTooBigEventArgs> handler = bot.FileTooBig;
+                            handler.Invoke(bot, ftbea);
+                            command = new TelegramEmptyCommand(message.From.Id);
                         }
                         break;
                 }
-                Dispatch(command);
+                bot.Dispatch(command);
             }
-            if (e.Message.Type == MessageType.SuccessfulPayment)
+            if (message.Type == MessageType.SuccessfulPayment)
             {
-                string InvoiceId = e.Message.SuccessfulPayment.InvoicePayload;
+                string InvoiceId = message.SuccessfulPayment.InvoicePayload;
                 PaymentEventArgs pea = new PaymentEventArgs(InvoiceId);
-                EventHandler<PaymentEventArgs> handler = PaymentReceived;
-                handler.Invoke(this, pea);
+                EventHandler<PaymentEventArgs> handler = bot.PaymentReceived;
+                handler.Invoke(bot, pea);
             }
-            if (e.Message.Type == MessageType.ChatMembersAdded)
+            if (message.Type == MessageType.ChatMembersAdded)
             {
-                Console.WriteLine(e.Message.NewChatMembers);
+                Console.WriteLine(message.NewChatMembers);
             }
-            if (e.Message.Type == MessageType.Location || (e.Message.Type == MessageType.Venue && e.Message.Location != null))
+            if (message.Type == MessageType.Location || (message.Type == MessageType.Venue && message.Location != null))
             {
-                float[] coords = new float[2];
-                coords[0] = e.Message.Location.Latitude;
-                coords[1] = e.Message.Location.Longitude;
-                TelegramGeoCommand command = new TelegramGeoCommand(e.Message.From.Id, coords);
-                Dispatch(command);
+                double[] coords = new double[2];
+                coords[0] = message.Location.Latitude;
+                coords[1] = message.Location.Longitude;
+                TelegramGeoCommand command = new TelegramGeoCommand(message.From.Id, coords);
+                bot.Dispatch(command);
             }
         }
 
-        private void TelegramUpdate(object sender, UpdateEventArgs e)
+        private static async Task AnswerPreCheckoutQuetry(TelegramFSMBot botClient, PreCheckoutQuery preCheckoutQuery)
         {
-            if (e.Update.Type != UpdateType.Message && e.Update.Type != UpdateType.CallbackQuery)
+            try
             {
-                if (e.Update.Type == UpdateType.PreCheckoutQuery)
+                string OopsAnswer = "";
+                bool result = botClient.PerformPreCheckoutQuery(preCheckoutQuery.InvoicePayload, ref OopsAnswer);
+                if (result)
                 {
-                    try
-                    {
-                        string OopsAnswer = "";
-                        bool result = PerformPreCheckoutQuery(e.Update.PreCheckoutQuery.InvoicePayload, ref OopsAnswer);
-                        if (result)
-                        {
-                            AnswerPreCheckoutQueryAsync(e.Update.PreCheckoutQuery.Id);
-                        }
-                        else
-                        {
-                            AnswerPreCheckoutQueryAsync(e.Update.PreCheckoutQuery.Id, OopsAnswer);
-                        }
-                    }
-                    catch (Exception err)
-                    {
-                        BotUtils.LogException(err);
-                    }
+                    await botClient.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id);
+                }
+                else
+                {
+                    await botClient.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id, OopsAnswer);
                 }
             }
+            catch (Exception err)
+            {
+                BotUtils.LogException(err);
+            }
         }
+
+        protected static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        {
+            var handler = update.Type switch
+            {
+                // UpdateType.Unknown:
+                // UpdateType.ChannelPost:
+                // UpdateType.EditedChannelPost:
+                // UpdateType.ShippingQuery:
+                UpdateType.PreCheckoutQuery => AnswerPreCheckoutQuetry(botClient as TelegramFSMBot, update.PreCheckoutQuery!),
+                // UpdateType.Poll:
+                UpdateType.Message => TelegramMessage(botClient as TelegramFSMBot, update.Message!),
+                // UpdateType.EditedMessage => BotOnMessageReceived(botClient, update.EditedMessage!),
+                UpdateType.CallbackQuery => TelegramCallbackQuery(botClient as TelegramFSMBot, update.CallbackQuery!),
+                //UpdateType.InlineQuery => BotOnInlineQueryReceived(botClient, update.InlineQuery!),
+                //UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(botClient, update.ChosenInlineResult!),
+                _ => UnknownUpdateHandlerAsync(botClient, update)
+            };
+
+            try
+            {
+                await handler;
+            }
+            catch (Exception exception)
+            {
+                await HandleErrorAsync(botClient, exception, cancellationToken);
+            }
+        }
+
+        private static Task UnknownUpdateHandlerAsync(ITelegramBotClient botClient, Update update)
+        {
+            Console.WriteLine($"Unknown update type: {update.Type}");
+            return Task.CompletedTask;
+        }
+
     }
 }

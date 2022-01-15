@@ -2,7 +2,7 @@
 {
     internal class TelegramEmptyCommand : TelegramCommand
     {
-        public TelegramEmptyCommand(int UserId) : base(TelegramCommandType.Empty, UserId, null)
+        public TelegramEmptyCommand(long UserId) : base(TelegramCommandType.Empty, UserId, null)
         {
         }
     }

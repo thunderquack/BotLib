@@ -3,10 +3,10 @@
     public abstract class TelegramCommand
     {
         public TelegramCommandType CommandType { get; }
-        public int UserId { get; }
+        public long UserId { get; }
         public object Argument { get; }
 
-        public TelegramCommand(TelegramCommandType commandType, int UserId, object Argument)
+        public TelegramCommand(TelegramCommandType commandType, long UserId, object Argument)
         {
             this.CommandType = commandType;
             this.UserId = UserId;

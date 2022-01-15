@@ -9,7 +9,7 @@ namespace BotLib.FSM
     {
         private Type InitStateType;
 
-        public BotMachine(int UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot)
+        public BotMachine(long UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot)
         {
             this.UserId = UserId;
             this.Sender = sender;
@@ -24,12 +24,12 @@ namespace BotLib.FSM
 
         public BotState ActiveState { get; private set; }
         public virtual TelegramFSMBot Bot { get; }
-        public string BotMe => Bot.Me;
+        public string BotMe => Bot.me;
         public int LastMessageId { get; private set; }
 
         public TelegramMessageSender Sender { get; }
 
-        public int UserId { get; }
+        public long UserId { get; }
 
         public void Die()
         {
