@@ -13,9 +13,10 @@ namespace BotLib.Engine.Messages
 
         public InlineKeyboardMarkup ReplyMarkup => new InlineKeyboardMarkup(Link);
 
-        public void SetLink(string Caption, string Link)
+        public TelegramTextMessageWithLink SetLink(string Caption, string Link)
         {
             this.Link = InlineKeyboardButton.WithUrl(Caption, Link);
+            return this;
         }
 
         protected override void SetMessageType()

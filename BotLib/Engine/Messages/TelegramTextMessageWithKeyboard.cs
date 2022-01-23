@@ -19,16 +19,18 @@ namespace BotLib.Engine.Messages
 
         public InlineKeyboardMarkup ReplyMarkup => new InlineKeyboardMarkup(Keyboard);
 
-        public void AddCallbackButton(string text, string inlineCommand, bool toBottom = false)
+        public TelegramTextMessageWithKeyboard AddCallbackButton(string text, string inlineCommand, bool toBottom = false)
         {
             InlineKeyboardButton keyboardButton = InlineKeyboardButton.WithCallbackData(text, inlineCommand);
             AddButton(keyboardButton, toBottom);
+            return this;
         }
 
-        public void AddCallbackWebButton(string text, string url, bool toBottom = false)
+        public TelegramTextMessageWithKeyboard AddCallbackWebButton(string text, string url, bool toBottom = false)
         {
             InlineKeyboardButton keyboardButton = InlineKeyboardButton.WithUrl(text, url);
             AddButton(keyboardButton, toBottom);
+            return this;
         }
 
         public TelegramMessage GetMessageToHide()
@@ -48,9 +50,10 @@ namespace BotLib.Engine.Messages
         /// <summary>
         /// Clears keyboard of the message
         /// </summary>
-        protected void ClearKeyboard()
+        protected TelegramTextMessageWithKeyboard ClearKeyboard()
         {
             Keyboard = new InlineKeyboardButton[0][];
+            return this;
         }
 
         protected override void SetMessageType()
