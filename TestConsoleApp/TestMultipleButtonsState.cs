@@ -2,7 +2,6 @@
 using BotLib.FSM;
 using BotLib.FSM.HelperStates;
 using System.Collections.Generic;
-using Telegram.Bot.Types.Enums;
 
 namespace TestConsoleApp
 {

@@ -13,16 +13,16 @@ namespace BotLib
             return JsonConvert.SerializeObject(dateTime);
         }
 
-        public static int DemaskString(string Value)
+        public static long DemaskString(string Value)
         {
             long N = Convert.ToInt64(Value, 16);
             bool[] n = ConvertLongToBoolArray(N);
-            bool[] v = new bool[32];
-            for (int i = 0; i < 32; i++)
+            bool[] v = new bool[64];
+            for (int i = 0; i < 64; i++)
             {
                 v[i] = n[2 * i];
             }
-            return ConvertBoolArrayToInt(v);
+            return ConvertBoolArrayToLong(v);
         }
 
         public static DateTime JsonStringToDateTime(string JsonString)
@@ -51,7 +51,7 @@ namespace BotLib
         {
             Random r = new Random();
             int Mask = r.Next();
-            bool[] v = ConvertIntToBoolArray(Value);
+            bool[] v = ConvertLongToBoolArray(Value);
             bool[] m = ConvertIntToBoolArray(Mask);
             bool[] l = new bool[64];
             for (int i = 0; i < 32; i++)

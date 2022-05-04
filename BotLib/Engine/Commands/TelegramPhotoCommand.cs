@@ -2,8 +2,11 @@
 {
     public class TelegramPhotoCommand : TelegramBlobCommand
     {
-        public TelegramPhotoCommand(long UserId, object Argument) : base(TelegramCommandType.PhotoSent, UserId, Argument)
+        public TelegramPhotoCommand(long UserId, object Argument, string caption) : base(TelegramCommandType.PhotoSent, UserId, Argument)
         {
+            Caption = caption; 
         }
+
+        public string Caption { get; }
     }
 }

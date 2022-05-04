@@ -307,7 +307,7 @@ namespace BotLib.Engine
                     case MessageType.Photo:
                         bot.GetInfoAndDownloadFileAsync(message.Photo.Last().FileId, ms).Wait();
                         ms.Seek(0, SeekOrigin.Begin);
-                        command = new TelegramPhotoCommand(message.From.Id, ms.ToArray());
+                        command = new TelegramPhotoCommand(message.From.Id, ms.ToArray(), message.Caption);
                         break;
 
                     case MessageType.Document:
