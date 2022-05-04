@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyVersion>1.1.0.3</AssemblyVersion>
     <FileVersion>1.1.0.3</FileVersion>
-    <Version>1.1.0.2</Version>
+    <Version>1.1.0.3</Version>
     <Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2020</Copyright>
     <Authors>Egor Ivanov</Authors>
     <Description>Telegram Bot library which manipulates with states like Finite State Machine</Description>
