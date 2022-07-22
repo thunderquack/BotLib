@@ -6,6 +6,10 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+       fetch-depth: 0
     - name: dotnet setup
       uses: actions/setup-dotnet@v2
       with:
@@ -13,10 +17,6 @@ jobs:
         source-url: https://nuget.pkg.github.com/thunderquack/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-       fetch-depth: 0
     - name: Build
       run: dotnet build --configuration Release 
     - name: Pack
