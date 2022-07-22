@@ -15,31 +15,6 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<ShouldCreateLogs>True</ShouldCreateLogs>
-		<AdvancedSettingsExpanded>True</AdvancedSettingsExpanded>
-		<UpdateAssemblyVersion>False</UpdateAssemblyVersion>
-		<UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
-		<UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
-		<UpdatePackageVersion>False</UpdatePackageVersion>
-		<AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
-		<InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-		<AssemblyVersionSettings>None.None.Increment.None</AssemblyVersionSettings>
-		<PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<ShouldCreateLogs>True</ShouldCreateLogs>
-		<AdvancedSettingsExpanded>True</AdvancedSettingsExpanded>
-		<UpdateAssemblyVersion>False</UpdateAssemblyVersion>
-		<UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
-		<UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
-		<UpdatePackageVersion>False</UpdatePackageVersion>
-		<AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
-		<InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-		<PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="GitVersion.MsBuild" Version="5.10.3">
 			<PrivateAssets>all</PrivateAssets>
