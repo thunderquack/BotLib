@@ -6,7 +6,6 @@
 		<Authors>Egor Ivanov</Authors>
 		<Description>Telegram Bot library which manipulates with states like Finite State Machine</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/thunderquack/BotLib</PackageProjectUrl>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<DebugType>Embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
