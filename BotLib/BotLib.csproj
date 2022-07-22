@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2020</Copyright>
+		<Copyright>Egor Ivanov in cooperation with Nina Makon, Berlin - Moscow, 2022</Copyright>
 		<Authors>Egor Ivanov</Authors>
 		<Description>Telegram Bot library which manipulates with states like Finite State Machine</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
