@@ -13,6 +13,8 @@
 		<ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>NuGet.Workflow</PackageId>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
 	<ItemGroup>
