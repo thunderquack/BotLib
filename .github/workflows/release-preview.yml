@@ -25,3 +25,4 @@ jobs:
         # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
         VERSION_FILE_PATH: BotLib/obj/gitversion.json
         VERSION_REGEX: '^.*?"FullSemVer": "(.*?)",$'
+        INCLUDE_SYMBOLS: true
