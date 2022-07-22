@@ -6,7 +6,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
-    - uses: actions/setup-dotnet@v2
+    - name: dotnet setup
+      uses: actions/setup-dotnet@v2
       with:
         config-file: nuget.config
         source-url: https://nuget.pkg.github.com/thunderquack/index.json
