@@ -1,8 +1,7 @@
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    tags:
+    - 1.*
 jobs:
   build:
     runs-on: windows-latest
@@ -16,7 +15,5 @@ jobs:
       run: dotnet build --configuration Release 
     - name: Pack
       run: dotnet pack --configuration Release --output .
-    - name: Push
-      run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish package to NuGet
+      run: dotnet nuget push *.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source "https://api.nuget.org/v3/index.json" --skip-duplicate 
