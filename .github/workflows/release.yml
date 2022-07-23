@@ -1,6 +1,7 @@
 on:
-  pull_request:
-    branches: [ "master" ]
+  push:
+    tags:
+    - 1.1.*
 jobs:
   build:
     runs-on: windows-latest
