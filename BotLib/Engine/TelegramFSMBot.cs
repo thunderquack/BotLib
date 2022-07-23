@@ -11,13 +11,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Extensions.Polling;
-using System.Threading.Tasks;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Types;
 using System.Threading;
+using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Extensions.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.Payments;
 
 namespace BotLib.Engine
@@ -31,18 +31,18 @@ namespace BotLib.Engine
         private const string PARAMETRIC_COMMAND_PALETTE = "\\/start (.*)";
         private readonly string configFile = Path.Combine(CONFIG_DIR, "botconfig.json");
         private readonly FSMBotConfig FSMConfig;
-        private readonly Dictionary<long, BotMachine> Machines;
-        private readonly TelegramMessageSender Sender;
-        private Type BotMachineType;
-        private Type InitStateType;
-        private Type ParametricInitStateType;
+        private readonly Dictionary<long, BotMachine> machines;
+        private readonly TelegramMessageSender sender;
+        private Type botMachineType;
+        private Type initStateType;
+        private Type parametricInitStateType;
 
         protected TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
             this.DebugMode = DebugMode;
-            Sender = new TelegramMessageSender(this, sendingInterval);
+            sender = new TelegramMessageSender(this, sendingInterval);
             NonPriorityMessageSender = new TelegramMessageSender(this, nonPrioritySendingInterval);
-            Machines = new Dictionary<long, BotMachine>();
+            machines = new Dictionary<long, BotMachine>();
             LastMessageIds = new Dictionary<long, int>();
             AdminTasker = new AdminTasker(this);
             FSMConfig = new FSMBotConfig(configFile);
@@ -86,11 +86,11 @@ namespace BotLib.Engine
         {
             get
             {
-                return Sender.LoggingEnabled;
+                return sender.LoggingEnabled;
             }
             set
             {
-                Sender.LoggingEnabled = value;
+                sender.LoggingEnabled = value;
             }
         }
 
@@ -100,11 +100,11 @@ namespace BotLib.Engine
         {
             get
             {
-                return Sender.Interval;
+                return sender.Interval;
             }
             set
             {
-                Sender.SetNewInterval(value);
+                sender.SetNewInterval(value);
             }
         }
 
@@ -135,23 +135,23 @@ namespace BotLib.Engine
         public BotMachine CreateMachine(long UserId)
         {
             KillMachine(UserId);
-            BotMachine machine = Activator.CreateInstance(BotMachineType, UserId, Sender, InitStateType, this) as BotMachine;
-            Machines.Add(UserId, machine);
+            BotMachine machine = Activator.CreateInstance(botMachineType, UserId, sender, initStateType, this) as BotMachine;
+            machines.Add(UserId, machine);
             return machine;
         }
 
         public BotMachine CreateMachine(long UserId, Type InitialStateType)
         {
             KillMachine(UserId);
-            BotMachine machine = Activator.CreateInstance(BotMachineType, UserId, Sender, InitialStateType, this) as BotMachine;
-            Machines.Add(UserId, machine);
+            BotMachine machine = Activator.CreateInstance(botMachineType, UserId, sender, InitialStateType, this) as BotMachine;
+            machines.Add(UserId, machine);
             return machine;
         }
 
         public void KillMachine(long UserId)
         {
             if (MachineExists(UserId))
-                Machines.Remove(UserId);
+                machines.Remove(UserId);
         }
 
         public abstract bool PerformPreCheckoutQuery(string InvoiceId, ref string OopsAnser);
@@ -170,8 +170,8 @@ namespace BotLib.Engine
                 LastMessageIds.Add(ChatId, MessageId);
             try
             {
-                if (Machines.ContainsKey(Convert.ToInt32(ChatId)))
-                    Machines[Convert.ToInt32(ChatId)].SetLastMessageId(MessageId);
+                if (machines.ContainsKey(Convert.ToInt32(ChatId)))
+                    machines[Convert.ToInt32(ChatId)].SetLastMessageId(MessageId);
             }
             catch
             {
@@ -212,22 +212,22 @@ namespace BotLib.Engine
 
         protected void SendMessageDirectly(TelegramMessage Message)
         {
-            Sender.Enqueue(Message);
+            sender.Enqueue(Message);
         }
 
         protected void SetBotMachineType(Type type)
         {
-            BotMachineType = type;
+            botMachineType = type;
         }
 
         protected void SetInitStateType(Type type)
         {
-            InitStateType = type;
+            initStateType = type;
         }
 
         protected void SetParametricInitStateType(Type type)
         {
-            ParametricInitStateType = type;
+            parametricInitStateType = type;
         }
 
         protected void SetPaymentsKey(string PaymentsKey)
@@ -304,7 +304,7 @@ namespace BotLib.Engine
                     case MessageType.Document:
                         if (message.Document.FileSize < 19922944)
                         {
-                            if (bot.AnswerToFilesWithType) bot.Sender.Enqueue(new TelegramTypingMessage(message.From.Id));
+                            if (bot.AnswerToFilesWithType) bot.sender.Enqueue(new TelegramTypingMessage(message.From.Id));
                             await bot.GetInfoAndDownloadFileAsync(message.Document.FileId, ms);
                             ms.Seek(0, SeekOrigin.Begin);
                             FileName = message.Document.FileName;
@@ -350,12 +350,12 @@ namespace BotLib.Engine
 
         private void CheckBotMachineType()
         {
-            if (!BotMachineType.IsSubclassOf(typeof(BotMachine))) throw new InvalidBotMachineTypeException("Invalid BotMachine type", BotMachineType);
+            if (!botMachineType.IsSubclassOf(typeof(BotMachine))) throw new InvalidBotMachineTypeException("Invalid BotMachine type", botMachineType);
         }
 
         private void CheckInitStateType()
         {
-            if (!InitStateType.IsSubclassOf(typeof(BotState))) throw new InvalidBotStateTypeException("Invalid BotState type", InitStateType);
+            if (!initStateType.IsSubclassOf(typeof(BotState))) throw new InvalidBotStateTypeException("Invalid BotState type", initStateType);
         }
 
         private void Dispatch(TelegramCommand command)
@@ -370,7 +370,7 @@ namespace BotLib.Engine
                         CreateMachine(command.UserId);
                     }
                     else
-                        Machines[command.UserId].ProcessCommand(command);
+                        machines[command.UserId].ProcessCommand(command);
                 }
                 else
                 {
@@ -381,8 +381,8 @@ namespace BotLib.Engine
 
         private void DispatchParametricCommand(ParametricStartEventArgs parametricStartEvent)
         {
-            CreateMachine(parametricStartEvent.UserId, ParametricInitStateType);
-            Machines[parametricStartEvent.UserId].ReceiveParametricStart(parametricStartEvent);
+            CreateMachine(parametricStartEvent.UserId, parametricInitStateType);
+            machines[parametricStartEvent.UserId].ReceiveParametricStart(parametricStartEvent);
         }
 
         private void Init()
@@ -397,7 +397,7 @@ namespace BotLib.Engine
 
         private bool MachineExists(long UserId)
         {
-            return Machines.ContainsKey(UserId);
+            return machines.ContainsKey(UserId);
         }
 
         private void ReceiveParametricStart(ParametricStartEventArgs e)
