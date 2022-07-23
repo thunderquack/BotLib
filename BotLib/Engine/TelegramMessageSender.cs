@@ -12,9 +12,9 @@ namespace BotLib.Engine
     public class TelegramMessageSender
     {
         private const int SENDING_INTERVAL = 50;
-        private TelegramFSMBot bot;
-        private LinkedList<TelegramMessage> Queue;
-        private Timer SendTimer;
+        private readonly TelegramFSMBot bot;
+        private readonly LinkedList<TelegramMessage> queue;
+        private readonly Timer sendTimer;
 
         /// <summary>
         /// Creates an instance of Sender
@@ -23,11 +23,11 @@ namespace BotLib.Engine
         public TelegramMessageSender(TelegramFSMBot bot, bool logMessage = false)
         {
             this.bot = bot;
-            Queue = new LinkedList<TelegramMessage>();
-            SendTimer = new Timer(SENDING_INTERVAL);
-            SendTimer.Elapsed += TimeToSend;
+            queue = new LinkedList<TelegramMessage>();
+            sendTimer = new Timer(SENDING_INTERVAL);
+            sendTimer.Elapsed += TimeToSend;
             LoggingEnabled = logMessage;
-            SendTimer.Start();
+            sendTimer.Start();
         }
 
         /// <summary>
@@ -38,18 +38,18 @@ namespace BotLib.Engine
         public TelegramMessageSender(TelegramFSMBot bot, int SendingInterval = 50, bool logMessage = false)
         {
             this.bot = bot;
-            Queue = new LinkedList<TelegramMessage>();
-            SendTimer = new Timer(SendingInterval);
-            SendTimer.Elapsed += TimeToSend;
+            queue = new LinkedList<TelegramMessage>();
+            sendTimer = new Timer(SendingInterval);
+            sendTimer.Elapsed += TimeToSend;
             LoggingEnabled = logMessage;
-            SendTimer.Start();
+            sendTimer.Start();
         }
 
         public double Interval
         {
             get
             {
-                return SendTimer.Interval;
+                return sendTimer.Interval;
             }
         }
 
@@ -57,27 +57,27 @@ namespace BotLib.Engine
 
         public void Add(TelegramMessage telegramMessage)
         {
-            Queue.AddFirst(telegramMessage);
+            queue.AddFirst(telegramMessage);
         }
 
         public void Enqueue(TelegramMessage telegramMessage)
         {
-            Queue.AddLast(telegramMessage);
+            queue.AddLast(telegramMessage);
         }
 
         public void SetNewInterval(double interval)
         {
-            SendTimer.Interval = interval;
+            sendTimer.Interval = interval;
         }
 
         private void TimeToSend(object sender, ElapsedEventArgs e)
         {
-            SendTimer.Stop();
-            if (Queue.Count > 0)
+            sendTimer.Stop();
+            if (queue.Count > 0)
             {
                 TelegramMessage message;
-                message = Queue.First.Value;
-                Queue.RemoveFirst();
+                message = queue.First.Value;
+                queue.RemoveFirst();
                 if (LoggingEnabled)
                     try
                     {
@@ -264,7 +264,7 @@ namespace BotLib.Engine
                         break;
                 }
             }
-            SendTimer.Start();
+            sendTimer.Start();
         }
     }
 }
