@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-    - 1.*
+    - 1.*.*
 jobs:
   build:
     runs-on: windows-latest
@@ -14,6 +14,6 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release 
     - name: Pack
-      run: dotnet pack --configuration Release --output .
+      run: dotnet pack --configuration Release --include-symbols --output .
     - name: Publish package to NuGet
       run: dotnet nuget push *.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source "https://api.nuget.org/v3/index.json" --skip-duplicate 
