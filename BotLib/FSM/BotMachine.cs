@@ -7,9 +7,9 @@ namespace BotLib.FSM
 {
     public abstract class BotMachine
     {
-        private Type InitStateType;
+        private readonly Type InitStateType;
 
-        public BotMachine(long UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot)
+        protected BotMachine(long UserId, TelegramMessageSender sender, Type InitStateType, TelegramFSMBot Bot)
         {
             this.UserId = UserId;
             this.Sender = sender;

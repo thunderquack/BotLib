@@ -7,10 +7,10 @@ namespace BotLib.FSM
 {
     public abstract class BotState
     {
-        public int LastMessageId;
+        public int LastMessageId { get; set; }
         protected bool Go = false;
 
-        public BotState(long UserId, BotMachine Machine)
+        protected BotState(long UserId, BotMachine Machine)
         {
             this.UserId = UserId;
             this.Machine = Machine;
