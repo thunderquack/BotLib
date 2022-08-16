@@ -9,6 +9,9 @@ namespace BotLib.Engine.Commands
         public long UserId { get; }
         public object Argument { get; }
 
+        /// <summary>
+        /// Original message if exists
+        /// </summary>
         public Message Message
         {
             get
