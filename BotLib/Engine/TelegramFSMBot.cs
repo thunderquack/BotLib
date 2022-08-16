@@ -37,6 +37,7 @@ namespace BotLib.Engine
         private Type initStateType;
         private Type parametricInitStateType;
 
+        [Obsolete("Please use constructor with types instead")]
         protected TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
             this.DebugMode = DebugMode;
@@ -49,6 +50,45 @@ namespace BotLib.Engine
             SetInitStateType();
             SetParametricInitStateType();
             SetBotMachineType();
+            CheckBotMachineType();
+            CheckInitStateType();
+            Init();
+        }        
+        
+        protected TelegramFSMBot(string token, Type initStateType, Type parametricInitStateType, Type botMachineType, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
+        {
+            this.DebugMode = DebugMode;
+            sender = new TelegramMessageSender(this, sendingInterval);
+            NonPriorityMessageSender = new TelegramMessageSender(this, nonPrioritySendingInterval);
+            machines = new Dictionary<long, BotMachine>();
+            LastMessageIds = new Dictionary<long, int>();
+            AdminTasker = new AdminTasker(this);
+            FSMConfig = new FSMBotConfig(configFile);
+            if (initStateType.IsSubclassOf(typeof(BotState)))
+            {
+                SetInitStateType(initStateType);
+            }
+            else
+            {
+                throw new InvalidBotStateTypeException("Invalid type", initStateType);
+            }                        
+            if (parametricInitStateType.IsSubclassOf(typeof(BotState)))
+            {
+                SetParametricInitStateType(parametricInitStateType);
+            }
+            else
+            {
+                throw new InvalidBotStateTypeException("Invalid type", parametricInitStateType);
+            }            
+            if (botMachineType.IsSubclassOf(typeof(BotMachine)))
+            {
+                SetBotMachineType(botMachineType);
+            }
+            else
+            {
+                throw new InvalidBotMachineTypeException("Invalid type", botMachineType);
+            }           
+            // TODO: remove?
             CheckBotMachineType();
             CheckInitStateType();
             Init();
@@ -156,10 +196,13 @@ namespace BotLib.Engine
 
         public abstract bool PerformPreCheckoutQuery(string InvoiceId, ref string OopsAnser);
 
+        [Obsolete("SetBotMachineType is deprecated, please use constructor with types instead.")]
         public abstract void SetBotMachineType();
 
+        [Obsolete("SetInitStateType is deprecated, please use constructor with types instead.")]
         public abstract void SetInitStateType();
 
+        [Obsolete("SetParametricInitStateType is deprecated, please use constructor with types instead.")]
         public abstract void SetParametricInitStateType();
 
         internal void SetLastMessageId(long ChatId, int MessageId)
@@ -286,6 +329,7 @@ namespace BotLib.Engine
                     return;
                 }
                 TelegramTextCommand command = new TelegramTextCommand(message.From.Id, message.Text);
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
             if (message.Type == MessageType.Photo || message.Type == MessageType.Document)
@@ -319,6 +363,7 @@ namespace BotLib.Engine
                         }
                         break;
                 }
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
             if (message.Type == MessageType.SuccessfulPayment)
@@ -338,6 +383,7 @@ namespace BotLib.Engine
                 coords[0] = message.Location.Latitude;
                 coords[1] = message.Location.Longitude;
                 TelegramGeoCommand command = new TelegramGeoCommand(message.From.Id, coords);
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
         }
