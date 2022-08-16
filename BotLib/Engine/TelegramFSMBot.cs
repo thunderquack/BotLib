@@ -329,6 +329,7 @@ namespace BotLib.Engine
                     return;
                 }
                 TelegramTextCommand command = new TelegramTextCommand(message.From.Id, message.Text);
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
             if (message.Type == MessageType.Photo || message.Type == MessageType.Document)
@@ -362,6 +363,7 @@ namespace BotLib.Engine
                         }
                         break;
                 }
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
             if (message.Type == MessageType.SuccessfulPayment)
@@ -381,6 +383,7 @@ namespace BotLib.Engine
                 coords[0] = message.Location.Latitude;
                 coords[1] = message.Location.Longitude;
                 TelegramGeoCommand command = new TelegramGeoCommand(message.From.Id, coords);
+                command.SetMessage(message);
                 bot.Dispatch(command);
             }
         }
