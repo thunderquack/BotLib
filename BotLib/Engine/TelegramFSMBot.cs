@@ -35,25 +35,7 @@ namespace BotLib.Engine
         private readonly TelegramMessageSender sender;
         private Type botMachineType;
         private Type initStateType;
-        private Type parametricInitStateType;
-
-        [Obsolete("Please use constructor with types instead")]
-        protected TelegramFSMBot(string token, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
-        {
-            this.DebugMode = DebugMode;
-            sender = new TelegramMessageSender(this, sendingInterval);
-            NonPriorityMessageSender = new TelegramMessageSender(this, nonPrioritySendingInterval);
-            machines = new Dictionary<long, BotMachine>();
-            LastMessageIds = new Dictionary<long, int>();
-            AdminTasker = new AdminTasker(this);
-            FSMConfig = new FSMBotConfig(configFile);
-            SetInitStateType();
-            SetParametricInitStateType();
-            SetBotMachineType();
-            CheckBotMachineType();
-            CheckInitStateType();
-            Init();
-        }        
+        private Type parametricInitStateType;       
         
         protected TelegramFSMBot(string token, Type initStateType, Type parametricInitStateType, Type botMachineType, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
