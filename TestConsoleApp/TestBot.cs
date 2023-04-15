@@ -8,7 +8,13 @@ namespace TestConsoleApp
     {
         public const long TEST_CHAT = 123;
 
-        public TestBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(token, httpClient, DebugMode)
+        public TestBot(string token, HttpClient httpClient = null, bool DebugMode = false) : base(
+            token, 
+            typeof(TestMachine),
+            typeof(TestFirstState), 
+            typeof(TestMachine),
+            httpClient, 
+            DebugMode)
         {
             SenderLoggingEnabled = true;
             StartReceiving();
