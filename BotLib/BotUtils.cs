@@ -42,13 +42,13 @@ namespace BotLib
         {
             Exception ex = exception;
             string output = "";
-            output = output + "-----------------------------------------------------------------------------\r\n";
-            output = output + "Date : " + DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm:ss") + "\r\n";
+            output += $"-----------------------------------------------------------------------------{Environment.NewLine}";
+            output += "Date : " + DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm:ss") + Environment.NewLine;
             while (ex != null)
             {
-                output = output + ex.GetType().FullName + "\r\n";
-                output = output + "Message : " + ex.Message + "\r\n";
-                output = output + "StackTrace : " + ex.StackTrace + "\r\n";
+                output = output + ex.GetType().FullName + Environment.NewLine;
+                output = output + "Message : " + ex.Message + Environment.NewLine;
+                output = output + "StackTrace : " + ex.StackTrace + Environment.NewLine;
                 ex = ex.InnerException;
             }
             File.AppendAllText(Path.Combine("botconfig", "botlog.txt"), output, Encoding.UTF8);
