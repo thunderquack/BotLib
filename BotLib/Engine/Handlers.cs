@@ -1,21 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using System.Linq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotLib.Engine
 {
-
     public class Handlers
     {
-
-
         private static async Task BotOnMessageReceived(ITelegramBotClient botClient, Message message)
         {
             Console.WriteLine($"Receive message type: {message.Type}");
@@ -98,7 +94,7 @@ namespace BotLib.Engine
                 var fileName = filePath.Split(Path.DirectorySeparatorChar).Last();
 
                 return await botClient.SendPhotoAsync(chatId: message.Chat.Id,
-                                                      photo: new InputOnlineFile(fileStream, fileName),
+                                                      photo: new InputFileStream(fileStream, fileName),
                                                       caption: "Nice Picture");
             }
 

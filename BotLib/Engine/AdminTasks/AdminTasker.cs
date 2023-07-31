@@ -65,7 +65,7 @@ namespace BotLib.Engine.AdminTasks
                         }
                         break;
 
-                    case AdminTaskType.ChatmemberKick:                        
+                    case AdminTaskType.ChatmemberKick:
                         Bot.BanChatMemberAsync(task.ChatId, (task as ChatmemberKickAdminTask).UserId);
                         break;
 

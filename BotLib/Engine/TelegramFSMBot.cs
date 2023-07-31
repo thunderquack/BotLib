@@ -35,8 +35,8 @@ namespace BotLib.Engine
         private readonly TelegramMessageSender sender;
         private Type botMachineType;
         private Type initStateType;
-        private Type parametricInitStateType;       
-        
+        private Type parametricInitStateType;
+
         protected TelegramFSMBot(string token, Type initStateType, Type parametricInitStateType, Type botMachineType, HttpClient httpClient = null, bool DebugMode = false, int sendingInterval = 50, int nonPrioritySendingInterval = 1000) : base(token, httpClient)
         {
             this.DebugMode = DebugMode;
@@ -53,7 +53,7 @@ namespace BotLib.Engine
             else
             {
                 throw new InvalidBotStateTypeException("Invalid type", initStateType);
-            }                        
+            }
             if (parametricInitStateType.IsSubclassOf(typeof(BotState)))
             {
                 SetParametricInitStateType(parametricInitStateType);
@@ -61,7 +61,7 @@ namespace BotLib.Engine
             else
             {
                 throw new InvalidBotStateTypeException("Invalid type", parametricInitStateType);
-            }            
+            }
             if (botMachineType.IsSubclassOf(typeof(BotMachine)))
             {
                 SetBotMachineType(botMachineType);
@@ -69,7 +69,7 @@ namespace BotLib.Engine
             else
             {
                 throw new InvalidBotMachineTypeException("Invalid type", botMachineType);
-            }           
+            }
             // TODO: remove?
             CheckBotMachineType();
             CheckInitStateType();

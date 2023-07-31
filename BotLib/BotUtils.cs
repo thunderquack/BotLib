@@ -29,7 +29,7 @@ namespace BotLib
             }
             bitArray = new BitArray(boolList.ToArray());
             byteArray = BitArrayToByteArray(bitArray);
-            
+
             return BitConverter.ToInt64(byteArray);
         }
 
@@ -69,8 +69,8 @@ namespace BotLib
             }
             long N = ConvertBoolArrayToLong(l);
             return Convert.ToString(N, 16);
-        }        
-        
+        }
+
         public static string MaskLong(long Value)
         {
             Random r = new Random();
@@ -88,7 +88,7 @@ namespace BotLib
             }
             BitArray b = new BitArray(l);
             byte[] vs = BitArrayToByteArray(b);
-            BigInteger N = new BigInteger(vs);           
+            BigInteger N = new BigInteger(vs);
             return N.ToString("X");
         }
 

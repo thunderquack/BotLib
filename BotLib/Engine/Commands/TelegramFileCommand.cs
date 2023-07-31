@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BotLib.Engine.Commands
+﻿namespace BotLib.Engine.Commands
 {
     public class TelegramFileCommand : TelegramBlobCommand
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Telegram.Bot.Types.Payments;
 
 namespace BotLib.Engine.Messages

@@ -4,7 +4,7 @@
     {
         public TelegramPhotoCommand(long UserId, object Argument, string caption) : base(TelegramCommandType.PhotoSent, UserId, Argument)
         {
-            Caption = caption; 
+            Caption = caption;
         }
 
         public string Caption { get; }
